@@ -1,5 +1,5 @@
 ############################################################################
-#### Code to plot Malaysian internal migration flows (2005 - 2010) #########
+#### Code to plot Malaysian internal migration flows (2010 - 2015) #########
 #### Code by Jason Jon Benedict, 17th May 2017 #############################
 #### Data from WorldPop ####################################################
 ############################################################################
@@ -108,15 +108,14 @@ ggplot() + geom_polygon(data=mys, aes(long,lat,group=group), fill="grey40")+
 geom_curve(data=mig, aes(x = LONFR, y = LATFR, xend = LONTO, yend = LATTO, alpha=PrdMIG,colour=PrdMIG,size=PrdMIG),curvature = .2) + 
 geom_point(data=labels, aes(x = LONFR, y = LATFR), col = "grey20",size=0.25) + 
 geom_text_repel(data=labels, aes(x = LONFR, y = LATFR, label = NODEI), col = "grey8", size = 2.5, segment.color = NA,family = "Arial Narrow") +
-xlim(99.5, 119.5) + ylim(-0.5, 8) + coord_fixed()+
-#scale_colour_viridis(option="plasma",limits = c(0,21000),breaks=c(0,21000),labels=c("Lowest","Highest"))+
+xlim(99.5, 119.5) + ylim(-0.5, 8) + coord_fixed()+ theme_mig+
 scale_color_gradientn(colours = rainbow(5),limits = c(0,21000),breaks=c(0,21000),labels=c("Lowest","Highest"))+
 scale_alpha_continuous(guide=FALSE)+
 scale_size_continuous(guide=FALSE,trans="sqrt",range=c(0.5,2))+
 labs(title='Malaysia internal migration flows',
 subtitle='2010 - 2015',
 caption='Data: WorldPop, www.worldpop.org')+
-guides(color = guide_colorbar(title = "Estimated internal migration flows", raster = F, title.position = "top"))+
+guides(color = guide_colorbar(title = "Estimated internal migration flows", raster = F, title.position = "top"))
 
 plot
 
