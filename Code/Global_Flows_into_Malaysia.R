@@ -7,8 +7,6 @@
 # Load libraries
 
 library(RColorBrewer)
-library(rnaturalearthdata)
-library(rnaturalearth)
 library(ggplot2)
 library(ggrepel)
 library(viridis)
@@ -20,7 +18,6 @@ library(mapdata)
 library(readxl)
 library(plyr)
 library(dplyr)
-library(ggalt)
 library(ggmap)
 library(rgeos)
 
