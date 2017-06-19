@@ -20,7 +20,7 @@ library(ggrepel)
 
 # Set working directory
 
-setwd("C:/Users/User/Google Drive/R/Dengue")
+setwd("C:/Users/Jason/Google Drive/R/Dengue")
 
 # Read data from spreadsheet and reformatting data
 
@@ -74,6 +74,7 @@ dat5 <- dat[4001:4076,]
 #write.csv(dat1,file="denggi_selangor1.csv",row.names=FALSE)
 
 # Loop through the addresses to get the latitude and longitude of each address and add it to the data frames
+# Export data frames to csv files
 
 # Data frame 1
 
@@ -207,8 +208,8 @@ scale_fill_brewer(palette = "YlOrRd",
 labels = c("<100", "100-250", "250-500",
 "500-1000", "1000-1500","1500-2000", "2000-2500",">2500")) +
 xlim(100.8, 102) + ylim(2.5, 4)+
-labs(title='Dengue hotspots for Selangor,Malaysia',
-subtitle='2014',
+labs(title='Dengue hotspots',
+subtitle='for Selangor, Malaysia in year 2014',
 caption='Notes: Only approx 85% of dengue case locations were geocoded due to erronous addresses in the dataset\n
 Data published by Ministry of Health Malaysia and provided to Open Data Malaysia - data.gov.my @jasonjb82')+ theme_map +
 guides(fill = guide_legend(title = "No of cases", raster = F, title.position = "top"))
