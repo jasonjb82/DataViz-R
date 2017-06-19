@@ -199,17 +199,17 @@ geom_polygon(data=map, aes(x=long,y=lat,group=group),colour="grey90",fill="grey9
 geom_polygon(data=map, aes(x=long,y=lat,group=group),colour="grey50",fill="grey50",size=0.001)+ 
 stat_summary_hex(aes(x = lon, y = lat, z = no_cases,
 fill = cut(..value.., c(0, 100, 250, 500, 1000,
-1500, 2000, 2500, Inf))),fun = sum,
+1500, 2000, 2500, 3000,Inf))),fun = sum,
 colour = NA, bins = 50, alpha = 0.75,
 data = df)+
 geom_text_repel(data=labels, aes(x = lon, y = lat, label = city), col = "black", size = 2.25, segment.color = NA,family = "Arial Narrow") +
 coord_equal()+
 scale_fill_brewer(palette = "YlOrRd",
 labels = c("<100", "100-250", "250-500",
-"500-1000", "1000-1500","1500-2000", "2000-2500",">2500")) +
+"500-1000", "1000-1500","1500-2000", "2000-2500","2500-3000",">3000")) +
 xlim(100.8, 102) + ylim(2.5, 4)+
 labs(title='Dengue hotspots',
-subtitle='for Selangor, Malaysia in year 2014',
+subtitle='Selangor, Malaysia in 2014',
 caption='Notes: Only approx 85% of dengue case locations were geocoded due to erronous addresses in the dataset\n
 Data published by Ministry of Health Malaysia and provided to Open Data Malaysia - data.gov.my @jasonjb82')+ theme_map +
 guides(fill = guide_legend(title = "No of cases", raster = F, title.position = "top"))
