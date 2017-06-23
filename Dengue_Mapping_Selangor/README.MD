@@ -1,2 +1,4 @@
-This visual was created using data from the Malaysian Open Data website.
+# Dengue Mapping for Selangor, Malaysia
+
+![alt text](https://github.com/jasonjb82/jasonjb82.github.io/raw/master/assets/images/favicon/apple-touch-icon.png)
 
