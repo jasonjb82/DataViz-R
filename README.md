@@ -1,4 +1,5 @@
 # DataViz-R
+![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
 
 This is my ([jasonjb82](https://jasonjb82.github.io/) / [@jasonjb82](https://twitter.com/jasonjb82)) place to publish data visualizations. Besides publishing code and work-in-progress images, I also use this to host my final visualizations. 
 
