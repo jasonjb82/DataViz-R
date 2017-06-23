@@ -1,5 +1,5 @@
 # DataViz-R
-![alt text](https://github.com/jasonjb82/jasonjb82.github.io/raw/master/assets/images/favicon/android-chrome-192x192.png)
+![alt text](https://github.com/jasonjb82/jasonjb82.github.io/raw/master/assets/images/favicon/apple-touch-icon.png)
 
 This is my ([jasonjb82](https://jasonjb82.github.io/) / [@jasonjb82](https://twitter.com/jasonjb82)) place to publish data visualizations. Besides publishing code and work-in-progress images, I also use this to host my final visualizations. 
 
