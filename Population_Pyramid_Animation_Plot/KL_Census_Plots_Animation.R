@@ -21,7 +21,7 @@ library(animation)
 
 # Set working directory
 
-setwd("C:/Users/User/Google Drive/R/Population/KL_POP")
+setwd("C:/Users/Jason/Google Drive/R/Population/KL_POP")
 
 # Read data from multiple csv files
 
@@ -33,6 +33,8 @@ df <- do.call(rbind,lapply(files,read.csv))
 
 colnames(df) <- c("year","age_group","total","male","female")
 
+df <- df[-c(3)]
+
 # Reformat data
 
 df %<>% 
@@ -42,7 +44,7 @@ mutate(age_group = factor(age_group,
                            levels = c(" 0 - 4"," 5 - 9"," 10 - 14"," 15 - 19"," 20 - 24"," 25 - 29",
                                       " 30 - 34"," 35 - 39"," 40 - 44"," 45 - 49"," 50 - 54",
                                     " 55 - 59"," 60 - 64"," 65 - 69"," 70 - 74"," 75 - 79"," 80 - 84"," 85+")),
-          number = ifelse(sex == "female", number*-1/10^2, number/10^2)) %>% 
+          number = ifelse(sex == "female", number*-1, number*1)) %>% 
           filter(year %in% c(1995:2010))
 
 # Drop NA's
@@ -60,21 +62,21 @@ df_plot <- df %>% drop_na()
 pop_plot <-
 ggplot(mys, aes(x = age_group, color = sex,frame=year))+
 geom_linerange(data = mys[mys$sex=="female",], 
-aes(ymin = -0.3, ymax = -0.3+number), size = 3.5, alpha = 0.8)+
+aes(ymin = -20, ymax = -20+number), size = 3.5, alpha = 0.8)+
 geom_linerange(data = mys[mys$sex=="male",], 
-aes(ymin = 0.3, ymax = 0.3+number), size = 3.5, alpha = 0.8)+
+aes(ymin = 20, ymax = 20+number), size = 3.5, alpha = 0.8)+
 geom_label(aes(x = age_group, y = 0, label = age_group, family = "Akrobat Black"), 
 inherit.aes = F,size = 3.5, label.padding = unit(0.0, "lines"), label.size = 0,
 label.r = unit(0.0, "lines"), fill = "#EFF2F4", alpha = 0.9, color = "#5D646F")+
-scale_y_continuous(breaks = c(c(-2, -1.5, -1, -0.5, 0) + -0.3, c(0, 0.5, 1, 1.5, 2)+0.3),
-labels = c("2", "1.5", "1", "0.5", "0", "0", "0.5", "1", "1.5", "2"))+
+scale_y_continuous(breaks = c(c(-100, -75, -50, -25, 0) + -20, c(0, 25, 50, 75, 100)+20),
+labels = c("100", "75", "50", "25", "0", "0", "25", "50", "75", "100"))+
 facet_wrap(~year, ncol = 1,scales = "fixed")+
-coord_flip( ylim=c(-1.5,1.5))+ 
-labs(title = "Population by sex and age group (in millions)",
+coord_flip( ylim=c(-120,120))+ 
+labs(title = "Population by sex and age group (in thousands)",
 subtitle = "Kuala Lumpur, Malaysia",
 caption = "\n\nData from Intercensal Mid-Year Population estimates published by Department of Statistics Malaysia and provided to Open Data Malaysia - data.gov.my \nVisualization by @jasonjb82")+
 scale_color_manual(name = "", values = c(female = "steelblue", male = "indianred"),
-labels = c("Male", "Female"))+
+labels = c("Female", "Male"))+
 theme_minimal(base_family = "Akrobat Black")+
 theme(text = element_text(color = "#3A3F4A"),
         panel.grid.major.y = element_blank(),
@@ -105,7 +107,7 @@ ggsave(pop_plot,filename = paste0("plot_",i,".png"),
 
 # Make a GIF with ImageMagick
 
-path.to.convert <- paste0(shortPathName("C:/Program Files/ImageMagick-6.9.0-Q16)"),"convert.exe")
+path.to.convert <- paste0(shortPathName("C:/Program Files/ImageMagick-6.9.3-Q16)"),"convert.exe")
 ani.options(convert=path.to.convert, interval=0.5)
 
 files <- Sys.glob("*.png")
