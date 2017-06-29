@@ -4,4 +4,4 @@ This visualization was produced using data from Weather Underground (https://www
 
 The lines represent the range from mins to max temperatures on that specific day for the year and the size of the blue circles represent the amount of precipitation recorded (in mm's).
 
-![alt text](https://github.com/jasonjb82/DataViz-R/raw/master/Dengue_Mapping_Selangor/Dengue_Selangor_Map_2014.png)
+![alt text](https://github.com/jasonjb82/DataViz-R/raw/master/Weather_Radial/Weather%20Radial.png)
