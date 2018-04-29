@@ -73,4 +73,4 @@ v <-  ggplot(data=bdf_2000,aes(x=year,y=monthf))+
 v
 
 # Exporting file to png
-ggsave(v, file="D:/R/Birth/birth_monthyear_mys.png", width=11, height=5)
+ggsave(v, file="birth_monthyear_mys.png", width=11, height=5)
