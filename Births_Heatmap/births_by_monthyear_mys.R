@@ -12,7 +12,7 @@ library(zoo)
 windowsFonts(Akrobat="Akrobat-ExtraBold")
 
 # Set working directory
-setwd("D:/R/Birth/")
+setwd("D:/R/DataViz-R/Births_Heatmap")
 
 # Read csv file
 df <- read.csv(file="UNdata_Export_20180428_034557857.csv",header=TRUE)
@@ -51,7 +51,7 @@ v <-  ggplot(data=bdf_2000,aes(x=year,y=monthf))+
       title='What was the most common birth month in Malaysia',
       subtitle='2000 - 2015\n',
       caption='Data source: United Nations Statistics Division, 2017\nGraphic produced by Jason J Benedict - www.jason-doug-climate.blogspot.com')+
-      theme(text = element_text(family = "Akrobat_Black", color = "#3A3F4A"),
+      theme(text = element_text(family = "Akrobat", color = "#3A3F4A"),
       panel.background=element_rect(fill="transparent"),
       panel.border=element_blank(),
       axis.title.y=element_text(size=12,colour="grey30"),
