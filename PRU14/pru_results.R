@@ -8,12 +8,35 @@ library(readxl)
 library(stringr)
 library(tidyr)
 library(gridExtra)
+library(tigris)
 
 setwd("D:/R/DataViz-R/PRU14")
 # Load font
 windowsFonts(Font="Open Sans")
 
-input_file <- "D:/R/DataViz-R/PRU14/malaysia_par_2015_demographics/perak.shp"
+# Import results from excel sheet
+
+results <- read_excel("Election-Results-2018.xlsx", sheet = "Parlimen_Result_By_Seat")
+
+colnames(results) <- c("par_code","name","mp","party","win_votes","pc_total_votes","majority_tot","total_votes_cand",
+                       "total_votes","number_cand")
+
+results$par_code <- str_replace_all(results$par_code, "P.", "P")
+
+results$won_party_2018[results$party == "BN" ] <-'BN'
+results$won_party_2018[results$party == "PKR" | results_2013$won_party_code == "DAP" ] <-'Opposition'
+
+old_results <- read.csv("parliaments_votes.csv",header=TRUE)
+
+results_2013 <- subset(old_results,year=="2013")
+
+results_2013$won_party_2013[results_2013$won_party_code == "UMNO" | results_2013$won_party_code == "MIC" |  results_2013$won_party_code == "MCA"| results_2013$won_party_code == "GERAKAN"] <-'BN'
+results_2013$won_party_2013[results_2013$won_party_code == "DAP" | results_2013$won_party_code == "PKR" ] <-'Opposition'
+
+# Convert wide to long
+data_long <- gather(results, results, values, win_votes:total_votes, factor_key=TRUE)
+
+input_file <- "D:/R/DataViz-R/PRU14/malaysia_par_2015_demographics/johor.shp"
 
 original_shapes <- read_polygons(input_file)
 
@@ -27,16 +50,8 @@ clean <- function(shape) {
   shape.df = merge(shape.points, shape@data, by="id")
 }
 
-result_df_raw <- clean(results_sdf)
-rawplot <- ggplot(result_df_raw) +
-  geom_polygon(aes(x = long, y = lat, fill = cartodb_id, group = group)) +
-  #geom_text(aes(xcentroid, ycentroid, label = substr(NAME, 1, 4)), size = 2,color = "white") +
-  coord_equal() +
-  scale_fill_viridis() +
-  guides(fill = FALSE) +
-  theme_void()
-
-rawplot
+results_sdf <- geo_join(raw, results, 'par_code', 'par_code', how = 'inner')
+results_comb_sdf <- geo_join(results_sdf, results_2013, 'par_code', 'parl_code', how = 'inner')
 
 par(mfrow = c(2, 3), mar = c(0, 0, 2, 0))
 for (i in 1:6) {
@@ -44,32 +59,16 @@ for (i in 1:6) {
   plot(new_cells, main = paste("Seed", i, sep = " "))
 }
 
-new_cells_hex <- calculate_grid(shape = results_sdf, grid_type = "hexagonal", seed = 2)
-resulthex <- assign_polygons(results_sdf, new_cells_hex)
+new_cells_hex <- calculate_grid(shape = results_comb_sdf, grid_type = "hexagonal", seed = 4)
+resulthex <- assign_polygons(results_comb_sdf, new_cells_hex)
 
 result_df_hex <- clean(resulthex)
 
-# Import results from excel sheet
-
-results <- read_excel("Election-Results-2018.xlsx", sheet = "Parlimen_Result_By_Seat")
-
-colnames(results) <- c("par_code","name","mp","party","win_votes","pc_total_votes","majority_tot","total_votes_cand",
-                       "total_votes","number_cand")
-
-results$par_code <- str_replace_all(results$par_code, "P.", "P")
-
-# Convert wide to long
-
-data_long <- gather(results, results, values, win_votes:total_votes, factor_key=TRUE)
 
 library(writexl)
 outfile = "D:/File.xlsx"
 write_xlsx(data_long,path="D:/File.xlsx")
 write_xlsx(result_df_hex,path="D:/File1.xlsx")
-
-library(tigris)
-results_sdf <- geo_join(raw, results, 'par_code', 'par_code', how = 'inner')
-
 
 nrow(results_sdf)
 
@@ -83,7 +82,7 @@ p1 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='Votes of Winning Candidate')+
+      title='  Votes of Winning Candidate in 2018')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -99,7 +98,7 @@ p2 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='Percent of Total Votes')+
+      title='  Percent of Total Votes in 2018')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 p2
@@ -115,7 +114,7 @@ p3 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void() +
       labs(
-      title='Majority Total')+
+      title=' Total Majority in 2018')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -131,7 +130,7 @@ p4 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='Total Votes for Candidates')+
+      title='  Total Votes for Candidates in 2018')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -186,20 +185,46 @@ top = textGrob("\nPRU14 PARLIAMENT RESULTS - PERAK\n",gp=gpar(fontsize=20,font=1
 
 dev.off()
 
-cols <- c("BN" = "darkblue", "PKR" = "red", "PAS" = "darkgreen")
+cols <- c("BN" = "slateblue3", "Opposition" = "lightcoral", "PAS" = "mediumseagreen")
 
 p5 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = party, group = group),colour="black") +
-      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
-      scale_fill_manual(values=cols) +
+      geom_polygon(aes(x = long, y = lat, fill = won_party_2013, group = group),colour="black") +
+      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "white") +
+      #geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
+      scale_fill_manual(values=cols,name="") +
       #scale_fill_distiller(palette="RdPu", na.value="#7f7f7f",name="Total")+
       coord_equal() +
-      guides(fill = FALSE) +
+      #guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='Total Votes for Candidates')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"))
-
+      title='  Winning party (coalition) in 2013')+
+      theme(text = element_text(family = "Font", color = "#3A3F4A"),
+      legend.position="bottom")
 
 p5
+
+p6 <- ggplot(result_df_hex) +
+      geom_polygon(aes(x = long, y = lat, fill = won_party_2018, group = group),colour="black") +
+      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "white") +
+      #geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
+      scale_fill_manual(values=cols,name="") +
+      #scale_fill_distiller(palette="RdPu", na.value="#7f7f7f",name="Total")+
+      coord_equal() +
+      #guides(fill = FALSE) +
+      theme_void()+
+      labs(
+      title='  Winning party (coalition) in 2018')+
+      theme(text = element_text(family = "Font", color = "#3A3F4A"),
+      legend.position="bottom")
+
+
+p6
+
+png(file="PRU14_Johor_Results.png",width = 10, height = 11, units = "in",
+    bg = "white", res = 400, family = "", restoreConsole = TRUE,
+    type = "cairo")
+
+grid.arrange(p5,p6,p1,p3,nrow=2,
+top = textGrob("\nThe winds of change in Johor\nThe numbers behind the Oppositions capture of the UMNO heartland\n",gp=gpar(fontsize=20,font=1)),
+bottom = textGrob("\nSource: SPR (2018) - Graphic produced by @jasonjb82\n",gp=gpar(fontsize=10,font=3)))
+dev.off()
