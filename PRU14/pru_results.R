@@ -12,7 +12,7 @@ library(tigris)
 
 setwd("D:/R/DataViz-R/PRU14")
 # Load font
-windowsFonts(Font="Open Sans")
+windowsFonts(Font="Segui UI")
 
 # Import results from excel sheet
 
@@ -24,7 +24,7 @@ colnames(results) <- c("par_code","name","mp","party","win_votes","pc_total_vote
 results$par_code <- str_replace_all(results$par_code, "P.", "P")
 
 results$won_party_2018[results$party == "BN" ] <-'BN'
-results$won_party_2018[results$party == "PKR" | results_2013$won_party_code == "DAP" ] <-'Opposition'
+results$won_party_2018[results$party == "PKR" | results$party == "DAP" ] <-'Opposition'
 
 old_results <- read.csv("parliaments_votes.csv",header=TRUE)
 
@@ -64,13 +64,9 @@ resulthex <- assign_polygons(results_comb_sdf, new_cells_hex)
 
 result_df_hex <- clean(resulthex)
 
-
-library(writexl)
-outfile = "D:/File.xlsx"
-write_xlsx(data_long,path="D:/File.xlsx")
-write_xlsx(result_df_hex,path="D:/File1.xlsx")
-
 nrow(results_sdf)
+
+# Generate plots
 
 p1 <- ggplot(result_df_hex) +
       geom_polygon(aes(x = long, y = lat, fill = win_votes, group = group),colour="black") +
@@ -82,7 +78,7 @@ p1 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Votes of Winning Candidate in 2018')+
+      title='  Votes of winning candidate in PRU14')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -98,7 +94,7 @@ p2 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Percent of Total Votes in 2018')+
+      title='  Percent of total votes in PRU14')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 p2
@@ -114,7 +110,7 @@ p3 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void() +
       labs(
-      title=' Total Majority in 2018')+
+      title=' Majority votes of winning candidate in PRU14')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -130,7 +126,7 @@ p4 <- ggplot(result_df_hex) +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Total Votes for Candidates in 2018')+
+      title='  Total votes for candidates in PRU14')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"))
 
 
@@ -185,7 +181,7 @@ top = textGrob("\nPRU14 PARLIAMENT RESULTS - PERAK\n",gp=gpar(fontsize=20,font=1
 
 dev.off()
 
-cols <- c("BN" = "slateblue3", "Opposition" = "lightcoral", "PAS" = "mediumseagreen")
+cols <- c("BN" = "steelblue2", "Opposition" = "violetred1", "PAS" = "mediumseagreen")
 
 p5 <- ggplot(result_df_hex) +
       geom_polygon(aes(x = long, y = lat, fill = won_party_2013, group = group),colour="black") +
@@ -197,7 +193,7 @@ p5 <- ggplot(result_df_hex) +
       #guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Winning party (coalition) in 2013')+
+      title='  Winning party (coalition) in PRU13')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"),
       legend.position="bottom")
 
@@ -213,18 +209,20 @@ p6 <- ggplot(result_df_hex) +
       #guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Winning party (coalition) in 2018')+
+      title='  Winning party (coalition) in PRU14')+
       theme(text = element_text(family = "Font", color = "#3A3F4A"),
       legend.position="bottom")
 
 
 p6
 
+
 png(file="PRU14_Johor_Results.png",width = 10, height = 11, units = "in",
-    bg = "white", res = 400, family = "", restoreConsole = TRUE,
+    bg = "white", res = 400, restoreConsole = TRUE,
     type = "cairo")
 
 grid.arrange(p5,p6,p1,p3,nrow=2,
-top = textGrob("\nThe winds of change in Johor\nThe numbers behind the Oppositions capture of the UMNO heartland\n",gp=gpar(fontsize=20,font=1)),
-bottom = textGrob("\nSource: SPR (2018) - Graphic produced by @jasonjb82\n",gp=gpar(fontsize=10,font=3)))
+top = textGrob("\nThe winds of change in Johor\nThe numbers behind the Oppositions capture of the UMNO heartland\n",gp=gpar(fontsize=20,fontfamily = "Font")),
+bottom = textGrob("\nSource: SPR / Keith Rozario (2018) - Graphic produced by @jasonjb82\n",gp=gpar(fontsize=10,fontfamily = "Font",font=3)))
 dev.off()
+
