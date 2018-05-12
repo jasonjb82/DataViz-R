@@ -39,6 +39,7 @@ results_2013$won_party_2013[results_2013$won_party_code == "DAP" | results_2013$
 # Convert wide to long
 data_long <- gather(results, results, values, win_votes:total_votes, factor_key=TRUE)
 
+# Read shapefile into R
 input_file <- "D:/R/DataViz-R/PRU14/malaysia_par_2015_demographics/johor.shp"
 
 original_shapes <- read_polygons(input_file)
@@ -53,6 +54,7 @@ clean <- function(shape) {
   shape.df = merge(shape.points, shape@data, by="id")
 }
 
+# Join shapefile and tabular data
 results_sdf <- geo_join(raw, results, 'par_code', 'par_code', how = 'inner')
 results_comb_sdf <- geo_join(results_sdf, results_2013, 'par_code', 'parl_code', how = 'inner')
 
