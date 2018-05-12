@@ -1,3 +1,4 @@
+# Load libraries
 library(rgdal)
 library(ggplot2)
 library(grid)
@@ -10,13 +11,14 @@ library(tidyr)
 library(gridExtra)
 library(tigris)
 library(scales)
+library(extrafont)
 
+# Set working directory
 setwd("D:/R/DataViz-R/PRU14")
 # Load font
 windowsFonts(Font="Segui UI")
 
-# Import results from excel sheet
-
+# Import results from excel sheet and csv and clean up data
 results <- read_excel("Election-Results-2018.xlsx", sheet = "Parlimen_Result_By_Seat")
 
 colnames(results) <- c("par_code","name","mp","party","win_votes","pc_total_votes","majority_tot","total_votes_cand",
@@ -54,6 +56,7 @@ clean <- function(shape) {
 results_sdf <- geo_join(raw, results, 'par_code', 'par_code', how = 'inner')
 results_comb_sdf <- geo_join(results_sdf, results_2013, 'par_code', 'parl_code', how = 'inner')
 
+# Function to create hexagon bins from shapefile
 par(mfrow = c(2, 3), mar = c(0, 0, 2, 0))
 for (i in 1:6) {
   new_cells <- calculate_grid(shape = results_sdf, learning_rate = 0.01, grid_type = "hexagonal", seed = i)
@@ -68,7 +71,6 @@ result_df_hex <- clean(resulthex)
 result_df_hex$parliament <- str_replace_all(result_df_hex$parliament, " ", "\n")
 
 # Generate plots
-
 p1 <- ggplot(result_df_hex) +
       geom_polygon(aes(x = long, y = lat, fill = win_votes, group = group),colour="#f5f5f5") +
       geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "grey25") +
@@ -104,7 +106,6 @@ p2 <- ggplot(result_df_hex) +
 
 p2
 
-
 p3 <- ggplot(result_df_hex) +
       geom_polygon(aes(x = long, y = lat, fill = majority_tot, group = group),colour="#f5f5f5") +
       geom_text(aes(V1, V2+0.04, label = substr(parliament, 1, 20)), size = 2, color = "black") +
@@ -139,11 +140,7 @@ p4 <- ggplot(result_df_hex) +
       plot.subtitle = element_text(face="bold",size = 10, colour = "grey30"))
 p4
 
-
 ## Plot and export to png file
-
-library(extrafont)
-
 #font_import()
 
 cols <- c("BN" = "steelblue2", "Opposition" = "violetred1", "PAS" = "mediumseagreen")
