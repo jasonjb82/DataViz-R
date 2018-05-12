@@ -9,6 +9,7 @@ library(stringr)
 library(tidyr)
 library(gridExtra)
 library(tigris)
+library(scales)
 
 setwd("D:/R/DataViz-R/PRU14")
 # Load font
@@ -64,165 +65,132 @@ resulthex <- assign_polygons(results_comb_sdf, new_cells_hex)
 
 result_df_hex <- clean(resulthex)
 
-nrow(results_sdf)
+result_df_hex$parliament <- str_replace_all(result_df_hex$parliament, " ", "\n")
 
 # Generate plots
 
 p1 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = win_votes, group = group),colour="black") +
-      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      geom_text(aes(V1, V2-0.03, label = substr(win_votes, 1, 20)), size = 3, color = "white") +
-      #scale_fill_distiller(palette="BuGn", na.value="#7f7f7f",name="Total")+
-      scale_fill_viridis(option="D",direction=-1) +
+      geom_polygon(aes(x = long, y = lat, fill = win_votes, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "grey25") +
+      geom_text(aes(V1,V2-0.04,label = comma(win_votes)), size = 3, color = "grey10") +
+      scale_y_continuous(label = comma)+
+      scale_fill_distiller(palette="YlOrBr", na.value="#7f7f7f",name="Total",direction=1)+
+      #scale_fill_viridis(option="C",direction=-1) +
       coord_equal() +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Votes of winning candidate in PRU14')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"))
-
+      title='Number of votes of winning candidate in GE14')+
+      theme(text = element_text(family="Calibri", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 12, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 10, colour = "grey30"))
 
 p1
 
 p2 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = pc_total_votes, group = group),colour="black") +
-      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      geom_text(aes(V1, V2-0.03, label = substr(pc_total_votes, 1, 20)), size = 3, color = "white") +
-      #scale_fill_viridis() +
-      scale_fill_distiller(palette="RdYlGn", na.value="#7f7f7f",name="Percent (%)")+
+      geom_polygon(aes(x = long, y = lat, fill = pc_total_votes, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2+0.04, label = substr(parliament, 1, 20)), size = 2, color = "black") +
+      geom_text(aes(V1, V2-0.04, label = paste0(round(pc_total_votes*100,0),"%")), size = 3, color = "black") +
+      #scale_fill_viridis(option="D") +
+      scale_fill_distiller(palette="Greens", na.value="#7f7f7f",name="Percent (%)",direction=1)+
       coord_equal() +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Percent of total votes in PRU14')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"))
+      title='\nPercent of total votes of winning candidate in GE14')+
+      theme(text = element_text(family="Akrobat", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 14, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 11, colour = "grey30"))
 
 p2
 
 
 p3 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = majority_tot, group = group),colour="black") +
-      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      geom_text(aes(V1, V2-0.03, label = substr(majority_tot, 1, 20)), size = 3, color = "white") +
-      scale_fill_viridis(option="B",direction=-1) +
-      #scale_fill_distiller(palette="YlOrBr", na.value="#7f7f7f",name="Total")+
+      geom_polygon(aes(x = long, y = lat, fill = majority_tot, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2+0.04, label = substr(parliament, 1, 20)), size = 2, color = "black") +
+      geom_text(aes(V1,V2-0.04,label = comma(majority_tot)), size = 3, color = "black") +
+      scale_y_continuous(label = comma)+
+      #scale_fill_viridis(option="B",direction=-1) +
+      scale_fill_distiller(palette="OrRd", na.value="#7f7f7f",name="Total",direction=1)+
       coord_equal() +
       guides(fill = FALSE) +
       theme_void() +
       labs(
-      title=' Majority votes of winning candidate in PRU14')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"))
-
+      title='\nNumber of majority votes of winning candidate in GE14')+
+      theme(text = element_text(family="Akrobat", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 14, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 11, colour = "grey30"))
 
 p3
 
 p4 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = total_votes_cand, group = group),colour="black") +
-      geom_text(aes(V1, V2+0.03, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
-      scale_fill_viridis(option="C",direction=-1) +
-      #scale_fill_distiller(palette="RdPu", na.value="#7f7f7f",name="Total")+
+      geom_polygon(aes(x = long, y = lat, fill = total_votes_cand, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2+0.04, label = substr(parliament, 1, 20)), size = 2, color = "grey25") +
+      geom_text(aes(V1, V2-0.04, label = substr(total_votes_cand, 1, 20)), size = 3, color = "grey25") +
+      #scale_fill_viridis(option="C",direction=-1) +
+      scale_fill_distiller(palette="BuPu", na.value="#7f7f7f",name="Total",direction=1)+
       coord_equal() +
       guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Total votes for candidates in PRU14')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"))
-
-
+      title='Total votes for candidates in GE14')+
+      theme(text = element_text(family="Calibri", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 12, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 10, colour = "grey30"))
 p4
-
-
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-  library(grid)
-  
-  # Make a list from the ... arguments and plotlist
-  plots <- c(list(...), plotlist)
-  
-  numPlots = length(plots)
-  
-  # If layout is NULL, then use 'cols' to determine layout
-  if (is.null(layout)) {
-    # Make the panel
-    # ncol: Number of columns of plots
-    # nrow: Number of rows needed, calculated from # of cols
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                     ncol = cols, nrow = ceiling(numPlots/cols))
-  }
-  
-  if (numPlots==1) {
-    print(plots[[1]])
-    
-  } else {
-    # Set up the page
-    grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    
-    # Make each plot, in the correct location
-    for (i in 1:numPlots) {
-      # Get the i,j matrix positions of the regions that contain this subplot
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-      
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-                                      layout.pos.col = matchidx$col))
-    }
-  }
-}
 
 
 ## Plot and export to png file
 
-png(file="PRU14_Perak_Results.png",width = 10, height = 11, units = "in",
-    bg = "white", res = 400, family = "", restoreConsole = TRUE,
-    type = "cairo")
+library(extrafont)
 
-grid.arrange(p1,p2,p4,p3,nrow=2,
-top = textGrob("\nPRU14 PARLIAMENT RESULTS - PERAK\n",gp=gpar(fontsize=20,font=1)))
-
-dev.off()
+#font_import()
 
 cols <- c("BN" = "steelblue2", "Opposition" = "violetred1", "PAS" = "mediumseagreen")
 
+# Set theme
+
 p5 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = won_party_2013, group = group),colour="black") +
-      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      #geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
+      geom_polygon(aes(x = long, y = lat, fill = won_party_2013, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "grey20") +
       scale_fill_manual(values=cols,name="") +
       #scale_fill_distiller(palette="RdPu", na.value="#7f7f7f",name="Total")+
       coord_equal() +
       #guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Winning party (coalition) in PRU13')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"),
+      title='Winning Party (coalition) in GE13',
+      subtitle= "(each hexagon represents one parliament seat)")+
+      theme(text = element_text(family="Akrobat", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 14, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 11, colour = "grey30"),
       legend.position="bottom")
 
 p5
 
 p6 <- ggplot(result_df_hex) +
-      geom_polygon(aes(x = long, y = lat, fill = won_party_2018, group = group),colour="black") +
-      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "white") +
-      #geom_text(aes(V1, V2-0.03, label = substr(total_votes_cand, 1, 20)), size = 3, color = "white") +
+      geom_polygon(aes(x = long, y = lat, fill = won_party_2018, group = group),colour="#f5f5f5") +
+      geom_text(aes(V1, V2, label = substr(parliament, 1, 20)), size = 2, color = "grey20") +
       scale_fill_manual(values=cols,name="") +
       #scale_fill_distiller(palette="RdPu", na.value="#7f7f7f",name="Total")+
       coord_equal() +
       #guides(fill = FALSE) +
       theme_void()+
       labs(
-      title='  Winning party (coalition) in PRU14')+
-      theme(text = element_text(family = "Font", color = "#3A3F4A"),
+      title='Winning Party (coalition) in GE14',
+      subtitle= "(each hexagon represents one parliament seat)")+
+      theme(text = element_text(family = "Akrobat", color = "#3A3F4A",size=13,face="bold"),
+      plot.title = element_text(lineheight=1.2, face="bold",size = 14, colour = "grey30",hjust = 0),
+      plot.subtitle = element_text(face="bold",size = 11, colour = "grey30"),
       legend.position="bottom")
-
 
 p6
 
-
-png(file="PRU14_Johor_Results.png",width = 10, height = 11, units = "in",
-    bg = "white", res = 400, restoreConsole = TRUE,
+png(file="PRU14_Johor_Results.png",width = 10.5, height = 10.5, units = "in",
+    bg = "grey95", res = 400, restoreConsole = TRUE,
     type = "cairo")
 
-grid.arrange(p5,p6,p1,p3,nrow=2,
-top = textGrob("\nThe winds of change in Johor\nThe numbers behind the Oppositions capture of the UMNO heartland\n",gp=gpar(fontsize=20,fontfamily = "Font")),
-bottom = textGrob("\nSource: SPR / Keith Rozario (2018) - Graphic produced by @jasonjb82\n",gp=gpar(fontsize=10,fontfamily = "Font",font=3)))
+grid.arrange(p5,p6,p2,p3,nrow=2,
+top = textGrob("\nWinds of change in UMNO's fort\nGE14 Parliament seat results in Johor\n",just="centre",gp=gpar(fontsize=22,fontfamily = "Akrobat",fontface="bold",col="gray30")),
+bottom = textGrob("\nSource: SPR / Keith Rozario (2018) - Graphic produced by @jasonjb82\n",gp=gpar(fontsize=11, fontfamily = "Akrobat",fontface="bold",col="gray30")))
 dev.off()
-
