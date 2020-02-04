@@ -31,3 +31,24 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+*.css
+*.js
+*.cpg
+*.geojson
+*.dbf
+*.prj
+*.sbn
+*.tif
+*.xml
+*.tfw
+*.ovr
+*.shp
+*.svg
+*.shx
+*.sbx
+*.asc
+*.html*
+PRU14/ge14-master/map/Malaysia_Parliamentary_Boundaries_2018.json
+PRU14/ge14-master/twitter_streaming_api.py
+PRU14/points.csv
+PRU14/ge14-master/gitignore
