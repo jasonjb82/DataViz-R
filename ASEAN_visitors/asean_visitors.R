@@ -96,7 +96,7 @@ ggplot() +
   labs(title = "Visitor Arrivals in 2018",
        subtitle = str_wrap("ASEAN Member States by Origin Countries (in person)", 100),
        caption = "Source: TidyTuesday & ASEANStatsDataPortal") + 
-  theme(plot.margin = margin(.5, 1, .5, .5, "cm"),
+  theme(plot.margin = margin(.5,1,.5,.5, "cm"),
         text = element_text(family = "Arial Narrow"),
         legend.position = "none",
         plot.background = element_rect(fill = "black"),
