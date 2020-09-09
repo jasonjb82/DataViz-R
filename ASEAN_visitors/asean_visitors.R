@@ -49,9 +49,11 @@ df <- read_excel("pivot.xlsx",skip = 2,.name_repair = make_clean_names) %>%
 # reformat data --------------
 sdf <- rnaturalearthdata::countries50 %>% 
   st_as_sf() %>% 
-  st_crop(xmin = 90, xmax = 150, ymin = -10, ymax = 30) %>% 
+  st_crop(xmin = 90, xmax = 200, ymin = -10, ymax = 30) %>% 
   filter(ADMIN %in% df$destination_country) %>% 
-  left_join(df, by = c("ADMIN" = "destination_country"))
+  left_join(df, by = c("ADMIN" = "destination_country")) %>%
+  mutate(Y2018 = x2018/1000000)
+  
 
 ranking <- st_geometry(sdf) %>% 
   st_point_on_surface() %>% 
@@ -60,9 +62,9 @@ ranking <- st_geometry(sdf) %>%
   bind_cols(tibble(visitor_cap = normalize(rank(sdf$x2018), range = c(0,20), method = "range"),
                    country = sdf$ADMIN,
                    xend = 140,
-                   x_axis_start = xend + 10,
+                   x_axis_start = xend + 5,
                    vis_cap_x = normalize(sdf$x2018, range = c(first(x_axis_start),180), method = "range"),
-                   val_txt = sdf$x2018))
+                   val_txt = paste0(format(sdf$Y2018, digits = 0, nsmall = 2)," mil")))
 
 sdf <- sdf %>% 
   bind_cols(ranking %>% dplyr::select(visitor_cap))
@@ -88,7 +90,7 @@ ggplot() +
   # Country text
   geom_text(data = ranking, aes(x = x_axis_start-.5, y = visitor_cap, label = country, color = visitor_cap), hjust = 1, size = 2.5, nudge_y = 1,family = "Arial Narrow") +
   # Value text
-  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = comma(val_txt), color = visitor_cap), hjust = 0, size = 2, nudge_x = 1,family = "Arial Narrow") +
+  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = val_txt, color = visitor_cap), hjust = 0, size = 2, nudge_x = 1,family = "Arial Narrow") +
   #coord_sf(clip = "off") +
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
@@ -96,7 +98,7 @@ ggplot() +
   labs(title = "Visitor Arrivals in 2018",
        subtitle = str_wrap("ASEAN Member States by Origin Countries (in person)", 100),
        caption = "Source: TidyTuesday & ASEANStatsDataPortal") + 
-  theme(plot.margin = margin(.5,1,.5,.5, "cm"),
+  theme(plot.margin = margin(.5,1.5,.5,.5, "cm"),
         text = element_text(family = "Arial Narrow"),
         legend.position = "none",
         plot.background = element_rect(fill = "black"),
@@ -105,4 +107,4 @@ ggplot() +
         plot.subtitle = element_text(color = "gray40", size = 8))
 
 # save plot -----------------
-ggsave("ranking_visitors.png", dpi = 1000)
+ggsave("ranking_visitors.png", dpi = 500,w=7, h=4,type="cairo-png")
