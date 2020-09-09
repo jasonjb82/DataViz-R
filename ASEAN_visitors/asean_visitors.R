@@ -57,11 +57,11 @@ ranking <- st_geometry(sdf) %>%
   st_point_on_surface() %>% 
   st_coordinates() %>% 
   as_tibble() %>% 
-  bind_cols(tibble(visitor_cap = normalize(rank(sdf$x2018), range = c(-2,20), method = "range"),
+  bind_cols(tibble(visitor_cap = normalize(rank(sdf$x2018), range = c(0,20), method = "range"),
                    country = sdf$ADMIN,
                    xend = 140,
                    x_axis_start = xend + 10,
-                   vis_cap_x = normalize(sdf$x2018, range = c(first(x_axis_start), 200), method = "range"),
+                   vis_cap_x = normalize(sdf$x2018, range = c(first(x_axis_start),180), method = "range"),
                    val_txt = sdf$x2018))
 
 sdf <- sdf %>% 
