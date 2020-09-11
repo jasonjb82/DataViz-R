@@ -35,12 +35,11 @@ library(BBmisc)
 
 loadfonts() 
 
-## set working directory
+## set working directory -----
 set_wd_to_script_path()
 
 
 # import data ----------------
-
 df <- read_excel("pivot.xlsx",skip = 2,.name_repair = make_clean_names) %>%
   mutate(destination_country = case_when(destination_country == "Viet Nam" ~"Vietnam",
                                          destination_country == "Lao PDR"~ "Laos",
@@ -63,7 +62,7 @@ ranking <- st_geometry(sdf) %>%
                    country = sdf$ADMIN,
                    xend = 140,
                    x_axis_start = xend + 5,
-                   vis_cap_x = normalize(sdf$x2018, range = c(first(x_axis_start),180), method = "range"),
+                   vis_cap_x = normalize(sdf$Y2018, range = c(first(x_axis_start),180), method = "range"),
                    val_txt = paste0(format(sdf$Y2018, digits = 0, nsmall = 2)," mil")))
 
 sdf <- sdf %>% 
@@ -74,35 +73,31 @@ sdf <- sdf %>%
 ggplot() + 
   geom_sf(data = sdf, size = .3, fill = "transparent", color = "gray17") +
   # Sigmoid from country to start of barchart
-  geom_sigmoid(data = ranking, 
-               aes(x = X, y = Y, xend = x_axis_start - .2, yend = visitor_cap, group = country, color = visitor_cap), 
-               alpha = .6, smooth = 10, size = 1) + 
+  geom_sigmoid(data = ranking,aes(x = X, y = Y, xend = x_axis_start - .2, yend = visitor_cap, group = country), 
+  color = "red",alpha = .4, smooth = 10, size = 0.5) + 
   # Line from xstart to value
-  geom_segment(data = ranking, 
-               aes(x = x_axis_start, y = visitor_cap, xend = vis_cap_x, yend = visitor_cap, color = visitor_cap), alpha = .6, size = 1, 
-               lineend = "round") + 
+  geom_segment(data = ranking,aes(x = x_axis_start, y = visitor_cap, xend = vis_cap_x, yend = visitor_cap,), color = "red",alpha = .6, size = 2, 
+  lineend = "round") + 
   # Y axis - black line
-  geom_segment(data = ranking, 
-               aes(x = x_axis_start, y = -3, xend = x_axis_start, yend = 22), alpha = .6, size = 1.3, color = "black") +
+  geom_segment(data = ranking,aes(x = x_axis_start, y = -3, xend = x_axis_start-0.85, yend = 22), alpha = .6, size = 1.85, color = "white") +
   # dot on centroid of country in map
-  geom_point(data = ranking, 
-             aes(x = X, y = Y, color = visitor_cap), size = 2) +
+  geom_point(data = ranking, aes(x = X, y = Y), color = "red",size = 1) +
   # Country text
-  geom_text(data = ranking, aes(x = x_axis_start-.5, y = visitor_cap, label = country, color = visitor_cap), hjust = 1, size = 2.5, nudge_y = 1,family = "Arial Narrow") +
+  geom_text(data = ranking, aes(x = x_axis_start-.5, y = visitor_cap, label = country), color = "red",hjust = 1, size = 2.5, nudge_y = 1,family = "Arial Narrow") +
   # Value text
-  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = val_txt, color = visitor_cap), hjust = 0, size = 2, nudge_x = 1,family = "Arial Narrow") +
+  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = val_txt), color= "red",hjust = 0, size = 2, nudge_x = 1,family = "Arial Narrow") +
   #coord_sf(clip = "off") +
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
   theme_void() +
   labs(title = "Visitor Arrivals in 2018",
-       subtitle = str_wrap("ASEAN Member States by Origin Countries (in person)", 100),
-       caption = "Source: TidyTuesday & ASEANStatsDataPortal") + 
+  subtitle = str_wrap("ASEAN Member States (in person)", 100),
+  caption = "Source: TidyTuesday & ASEANStatsDataPortal") + 
   theme(plot.margin = margin(.5,1.5,.5,.5, "cm"),
         text = element_text(family = "Arial Narrow"),
         legend.position = "none",
-        plot.background = element_rect(fill = "black"),
-        plot.caption = element_text(color = "gray40"),
+        #plot.background = element_rect(fill = "black"),
+        plot.caption = element_text(color = "gray40",size = 7),
         plot.title = element_text(color = "gray40", size = 16, family = "Arial Narrow", face = "bold"),
         plot.subtitle = element_text(color = "gray40", size = 8))
 
