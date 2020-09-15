@@ -63,7 +63,7 @@ ranking <- st_geometry(sdf) %>%
                    xend = 140,
                    x_axis_start = xend + 5,
                    vis_cap_x = normalize(sdf$Y2018, range = c(first(x_axis_start),180), method = "range"),
-                   val_txt = paste0(format(sdf$Y2018, digits = 0, nsmall = 2)," mil")))
+                   val_txt = paste0(format(sdf$Y2018, digits = 0, nsmall = 1)," mil")))
 
 sdf <- sdf %>% 
   bind_cols(ranking %>% dplyr::select(visitor_cap))
@@ -83,9 +83,9 @@ ggplot() +
   # dot on centroid of country in map
   geom_point(data = ranking, aes(x = X, y = Y), color = "red",size = 1) +
   # Country text
-  geom_text(data = ranking, aes(x = x_axis_start-.5, y = visitor_cap, label = country), color = "red",hjust = 1, size = 2.5, nudge_y = 1,family = "Arial Narrow") +
+  geom_text(data = ranking, aes(x = x_axis_start-.5, y = visitor_cap, label = country), color = "red",hjust = 1, size = 2.5, nudge_y = 1,family = "Poppins") +
   # Value text
-  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = val_txt), color= "red",hjust = 0, size = 2, nudge_x = 1,family = "Arial Narrow") +
+  geom_text(data = ranking, aes(x = vis_cap_x, y = visitor_cap, label = val_txt), color= "red",hjust = 0, size = 1.8 , nudge_x = 0.7,family = "Poppins") +
   #coord_sf(clip = "off") +
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
@@ -94,11 +94,11 @@ ggplot() +
   subtitle = str_wrap("ASEAN Member States (in person)", 100),
   caption = "Source: TidyTuesday & ASEANStatsDataPortal") + 
   theme(plot.margin = margin(.5,1.5,.5,.5, "cm"),
-        text = element_text(family = "Arial Narrow"),
+        text = element_text(family = "Poppins"),
         legend.position = "none",
         #plot.background = element_rect(fill = "black"),
-        plot.caption = element_text(color = "gray40",size = 7),
-        plot.title = element_text(color = "gray40", size = 16, family = "Arial Narrow", face = "bold"),
+        plot.caption = element_text(color = "gray40",size = 6),
+        plot.title = element_text(color = "gray40", size = 16, face = "bold"),
         plot.subtitle = element_text(color = "gray40", size = 8))
 
 # save plot -----------------
