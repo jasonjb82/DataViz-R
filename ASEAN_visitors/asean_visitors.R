@@ -48,9 +48,10 @@ df <- read_excel("pivot.xlsx",skip = 2,.name_repair = make_clean_names) %>%
 # reformat data --------------
 sdf <- rnaturalearthdata::countries50 %>% 
   st_as_sf() %>% 
+  st_make_valid() %>%
   st_crop(xmin = 90, xmax = 200, ymin = -10, ymax = 30) %>% 
-  filter(ADMIN %in% df$destination_country) %>% 
-  left_join(df, by = c("ADMIN" = "destination_country")) %>%
+  filter(admin %in% df$destination_country) %>% 
+  left_join(df, by = c("admin" = "destination_country")) %>%
   mutate(Y2018 = x2018/1000000)
   
 
@@ -59,7 +60,7 @@ ranking <- st_geometry(sdf) %>%
   st_coordinates() %>% 
   as_tibble() %>% 
   bind_cols(tibble(visitor_cap = normalize(rank(sdf$x2018), range = c(0,20), method = "range"),
-                   country = sdf$ADMIN,
+                   country = sdf$admin,
                    xend = 140,
                    x_axis_start = xend + 5,
                    vis_cap_x = normalize(sdf$Y2018, range = c(first(x_axis_start),180), method = "range"),
